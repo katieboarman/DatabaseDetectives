@@ -29,6 +29,7 @@ Enter your report here.
 AI Used: 
 
 ### SQL Log
+'''sql
 USE COSC315DD;
 
 SHOW TABLES;
@@ -36,3 +37,4 @@ SHOW TABLES;
 SELECT *
 FROM Suspects
 LIMIT 10;
+'''
