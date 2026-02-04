@@ -1,12 +1,13 @@
 # COSC 315 Database Detectives
-Name:
-Date: 
+Name: Katie Boarman
+Date: February 4, 2026
 
 ## Task Results
+For this assignment, I will be using the COSC315DD database on the CS Development Server. Before exploring the database, I assume it contains multiple related tables with primary and foreign key relationships. I also assume the data represents a realistic scenario which may contain some inconsistencies or missing values in the data set. Additionally, I expect that meaningful insights will require joining tables rather than relying on a singular table.
 
 ### Task 2 - Inventory the Database
 Link to Finalized DrawSQL ERD: 
-Enter your report here.
+
 
 ### Task 3 - Hypothesize and Test Relationships
 Enter your report here.
@@ -28,3 +29,10 @@ Enter your report here.
 AI Used: 
 
 ### SQL Log
+USE COSC315DD;
+
+SHOW TABLES;
+
+SELECT *
+FROM Suspects
+LIMIT 10;
