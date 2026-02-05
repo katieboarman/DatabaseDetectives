@@ -7,9 +7,9 @@ For this assignment, I will be using the COSC315DD database on the CS Developmen
 
 ### Task 2 - Inventory the Database
 Link to Finalized DrawSQL ERD: 
-How many tables exist?
-Which tables appear to represent core entities vs. supporting or join tables?
-Are there naming patterns that suggest relationships?
+<br> How many tables exist?
+<br> Which tables appear to represent core entities vs. supporting or join tables?
+<br> Are there naming patterns that suggest relationships?
 
 ### Task 3 - Hypothesize and Test Relationships
 Enter your report here.
