@@ -9,19 +9,6 @@ For this assignment, I will be using the COSC315DD database on the CS Developmen
 <br> How many tables exist?
 <br> There are eleven tables in the database: Client, Collection, CollectionItem, Creator, Format, Recording, Release, Sale, SaleItem, Staff, Style
 
-<br> What rows do each table contain?
-<br> Client contains: ClientId, FirstName, LastName, Company, Address, City, State, Country, PostalCode, Phone, Fax, Email, and AccountRepId
-<br> Collection contains: CollectionId and Name
-<br> CollectionItem contains: CollectionId and RecordingId
-<br> Creator contains: CreatorId and Name
-<br> Format contains: FormatId and Name
-<br> Recording contains: Recording Id, Name, ReleaseId, FormatId, StyleId, Writer, DurationMs, SizeBytes, and ItemPrice
-<br> Release contains: ReleaseId, Title, and CreatorId
-<br> Sale contains: SaleId, ClientId, InvoiceData, BillAddress, BillCity, BillRegion, BillCountry, BillPostal, and SaleTotal
-<br> SaleItem contains: SaleItemId, SaleId, RecordingId, ItemPrice, and Quantity
-<br> Staff contains: StaffId, LastName, FirstName, Title, ManagerId, BirthDate, HireDate, Address, City, State, Country, PostalCode, Phone, Fax, and Email
-<br> Style contains: StyleId and Name
-
 <br> What columns do each table contain?
 Each table in the data set contains: Field, Type, Null, Key, Default, and Extra columns.
 
@@ -39,16 +26,28 @@ Each table in the data set contains: Field, Type, Null, Key, Default, and Extra 
 <br> Style: Each style is uniquely identified by the integer primary key StyleId, which does not allow null values. The Name attribute is stored as a variable-length character string and may be null. 
 
 <br> Which tables appear to represent core entities vs. supporting or join tables?
-<br>
+<br> Core Entities: Client, Collection, Creator, Format, Recording, Release, Sale, Staff, Style
+<br> Supporting: Format and Style
+<br> Join: CollectionItem and SaleItem,
 
 <br> Are there naming patterns that suggest relationships?
-<br>
+<br> Yes, there is a repeated use of <EntityName>Id as the primary key for the tables. It suggests that each table has a clearly defined primary key that is intended to be referenced by other tables. Additionally, the table names listed as <Entity>Item indicate a join table. 
 
 <br> Link to Finalized DrawSQL ERD: https://drawsql.app/teams/katie-workspace/diagrams/database-detectives-graph 
 
 ### Task 3 - Hypothesize and Test Relationships
 <br> Which columns appear to function as foreign keys?
+<br> Client: AccountRepId
+<br> CollectionItem: CollectionId and RecordingId
+<br> Recording: ReleaseId, FormatId, and StyleId
+<br> Release: CreatorId
+<br> Sale: ClientId
+<br> SaleItem: SaleId and RecordingId
+<br> Staff: ManagerId
+
 <br> What cardinality do you suspect (one-to-many, many-to-many)?
+<br>
+
 <br> What evidence supports or contradicts each hypothesis?
 <br> Do joins behave as expected?
 <br> Are there orphaned records?
