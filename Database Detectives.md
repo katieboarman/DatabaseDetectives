@@ -14,9 +14,12 @@ Each table in the data set contains: Field, Type, Null, Key, Default, and Extra 
 
 <br> **Column data types and nullability**
 <br> **Client:** The Client table stores information about customers. Each client is uniquely identified by ClientId, which is the primary key. The table includes required name and email fields, along with optional company, address, and contact information. In the Client table, ClientId and AccountRepId are defined as integer values, while all remaining attributes are stored as variable-length character strings.
-<br> **Collection:** The Collection table contains an integer primary key, CollectionId, which uniquely identifies each collection and does not allow null values. The Name attribute is stored as a variable-length character string and may be null.
-<br> **CollectionItem:** The CollectionItem table consists entirely of integer attributes, CollectionId and RecordingId, which together form a composite primary key and do not allow null values.
-<br> **Creator:** Each creator is uniquely identified by the integer primary key CreatorId, which is not nullable. The Name attribute is stored as a variable-length character string and allows null values. 
+
+**Collection:** The Collection table contains an integer primary key, CollectionId, which uniquely identifies each collection and does not allow null values. The Name attribute is stored as a variable-length character string and may be null.
+
+**CollectionItem:** The CollectionItem table consists entirely of integer attributes, CollectionId and RecordingId, which together form a composite primary key and do not allow null values.
+
+**Creator:** Each creator is uniquely identified by the integer primary key CreatorId, which is not nullable. The Name attribute is stored as a variable-length character string and allows null values. 
 <br> **Format:** The Format table includes an integer primary key, FormatId, which does not allow null values. The Name attribute is stored as a variable-length character string and may be null. 
 <br> **Recording:** The Recording table is uniquely identified by the integer primary key RecordingId, which is not nullable. Descriptive attributes such as Name and Writer are stored as variable-length character strings. Numeric attributes such as ReleaseId, FormatId, StyleId, DurationMs, and SizeBytes use integer data types, with only FormatId and DurationMs being required. The ItemPrice key uses decimal data dype and is not nullable.
 <br> **Release:** Each release is uniquely identified by the integer primary key ReleaseId, which does not allow null values. The Title attribute is stored as a variable-length character string and is required, while the CreatorId attribute is an integer field and does not allow null values.
