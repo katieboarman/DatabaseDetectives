@@ -38,7 +38,7 @@ Each table in the data set contains: Field, Type, Null, Key, Default, and Extra 
 <br> **Which tables appear to represent core entities vs. supporting or join tables?**
 <br> **Core Entities:** Client, Collection, Creator, Format, Recording, Release, Sale, Staff, Style
 <br> **Supporting:** Format and Style
-<br> **Join:** CollectionItem and SaleItem,
+<br> **Join:** CollectionItem and SaleItem
 
 <br> **Are there naming patterns that suggest relationships?**
 <br> Yes, there is a repeated use of <EntityName>Id as the primary key for the tables. It suggests that each table has a clearly defined primary key that is intended to be referenced by other tables. Additionally, the table names listed as <Entity>Item indicate a join table. 
@@ -56,16 +56,39 @@ Each table in the data set contains: Field, Type, Null, Key, Default, and Extra 
 <br> **Staff:** ManagerId
 
 <br> **What cardinality do you suspect (one-to-many, many-to-many)?**
-<br>
+<br> The schema uses one-to-many relationships.
 
 <br> **What evidence supports or contradicts each hypothesis?**
+<br> **H1:** Styles differ by how often they are sold.
+This table provides strong evidence that styles differ in how often they are sold due to the large spread, from hundreds of sales for some styles to none for others.
+
+<br> **H2:** Formats differ in how many recordings exist in each format.
+The results strongly support the idea that formats differ in how many recordings exist in each format because the number of recordings varies dramatically by format.
+
+<br> **H3:** Collections contain multiple recordings.
+This table clearly supports the hypothesis that collections contain multiple recordings because every collection contains more than one recording, with counts ranging from 15 up to 3,290.
+
 <br> **Do joins behave as expected?**
+Yes
+
 <br> **Are there orphaned records?**
+No
+
 <br> **Do joins unexpectedly multiply rows?**
+There was row multiplication for H1 and H2 due to the one-to-many relationships, such as Style to Recording to SaleItem and Collection to CollectionItem. However, no unexpected row multiplication occured in the Format to Recording join, since each recording belongs to exactly one format.
 
 ### Task 4 - Aggregation & Uniqueness Analysis
+Use aggregation to better understand:
+Entity counts
+Attribute uniqueness
+Relationship multiplicity
+
+
 <br> What do aggregates reveal that simple inspection did not?
+
+
 <br> Where do assumptions break down?
+
 
 ### Task 5 - Anomalies & Design Issues
 <br> What design issues might exist?
@@ -92,9 +115,86 @@ Each table in the data set contains: Field, Type, Null, Key, Default, and Extra 
 
 AI Used: ChatGPT
 
+![Alt text](path/to/image.png "Optional title")
+
+
 ### SQL Log
 ```sql
 USE COSC315DD;
 
 SHOW TABLES;
+
+DESCRIBE Client;
+DESCRIBE Collection;
+DESCRIBE CollectionItem;
+DESCRIBE Creator;
+DESCRIBE Format;
+DESCRIBE Recording;
+DESCRIBE Release;;
+DESCRIBE Sale;
+DESCRIBE SaleItem;
+DESCRIBE Staff;
+DESCRIBE Style;
+
+### Testing H1
+SELECT st.StyleId,
+       st.Name AS StyleName,
+       COUNT(si.SaleItemId) AS TimesSold
+FROM Style st
+JOIN Recording r
+  ON r.StyleId = st.StyleId
+LEFT JOIN SaleItem si
+  ON si.RecordingId = r.RecordingId
+GROUP BY st.StyleId, st.Name
+ORDER BY TimesSold DESC;
+
+### Testing H2
+SELECT f.FormatId,
+       f.Name AS FormatName,
+       COUNT(r.RecordingId) AS NumRecordings
+FROM Format f
+LEFT JOIN Recording r
+  ON r.FormatId = f.FormatId
+GROUP BY f.FormatId, f.Name
+ORDER BY NumRecordings DESC;
+
+### Testing H3
+SELECT c.CollectionId,
+       c.Name,
+       COUNT(ci.RecordingId) AS NumRecordings
+FROM Collection c
+JOIN CollectionItem ci
+  ON ci.CollectionId = c.CollectionId
+GROUP BY c.CollectionId, c.Name
+HAVING COUNT(ci.RecordingId) >= 2
+ORDER BY NumRecordings DESC;
+
+##Orphan Check for H1
+-- Orphan recordings (StyleId not found)
+SELECT r.RecordingId, r.StyleId
+FROM Recording r
+LEFT JOIN Style s ON s.StyleId = r.StyleId
+WHERE r.StyleId IS NOT NULL
+  AND s.StyleId IS NULL;
+
+-- Orphan sale items (RecordingId not found)
+SELECT si.SaleItemId, si.RecordingId
+FROM SaleItem si
+LEFT JOIN Recording r ON r.RecordingId = si.RecordingId
+WHERE r.RecordingId IS NULL;
+
+### Orphan Check for H2
+-- Orphan recordings (FormatId not found)
+SELECT r.RecordingId, r.FormatId
+FROM Recording r
+LEFT JOIN Format f ON f.FormatId = r.FormatId
+WHERE f.FormatId IS NULL;
+
+## Orphan Check for H3
+-- Orphan collection items (CollectionId not found)
+SELECT ci.CollectionId, ci.RecordingId
+FROM CollectionItem ci
+LEFT JOIN Collection c ON c.CollectionId = ci.CollectionId
+WHERE c.CollectionId IS NULL;
+
 ```
