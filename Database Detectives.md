@@ -115,8 +115,15 @@ Relationship multiplicity
 
 AI Used: ChatGPT
 
-![Alt text](path/to/image.png "Optional title")
+![Alt text](path/to/image1.png "Question About Aggregation")
 
+![Alt text](path/to/image2.png "Question About Terminal")
+
+![Alt text](path/to/image3.png "Troubleshooting the Release Table")
+
+![Alt text](path/to/image4.png "Question About Column Types")
+
+![Alt text](path/to/image5.png "Examples About Hypotheses")
 
 ### SQL Log
 ```sql
