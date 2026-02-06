@@ -20,13 +20,20 @@ Each table in the data set contains: Field, Type, Null, Key, Default, and Extra 
 **CollectionItem:** The CollectionItem table consists entirely of integer attributes, CollectionId and RecordingId, which together form a composite primary key and do not allow null values.
 
 **Creator:** Each creator is uniquely identified by the integer primary key CreatorId, which is not nullable. The Name attribute is stored as a variable-length character string and allows null values. 
-<br> **Format:** The Format table includes an integer primary key, FormatId, which does not allow null values. The Name attribute is stored as a variable-length character string and may be null. 
-<br> **Recording:** The Recording table is uniquely identified by the integer primary key RecordingId, which is not nullable. Descriptive attributes such as Name and Writer are stored as variable-length character strings. Numeric attributes such as ReleaseId, FormatId, StyleId, DurationMs, and SizeBytes use integer data types, with only FormatId and DurationMs being required. The ItemPrice key uses decimal data dype and is not nullable.
-<br> **Release:** Each release is uniquely identified by the integer primary key ReleaseId, which does not allow null values. The Title attribute is stored as a variable-length character string and is required, while the CreatorId attribute is an integer field and does not allow null values.
-<br> **Sale:** Each sale is uniquely identified by the integer primary key SaleId, which does not allow null values. The table includes temporal data (InvoiceDate) stored as a datetime value that is required, as well as billing address attributes stored as variable-length character strings, which allows null values. The total value of a sale is stored in the SaleTotal column using a decimal data type.
-<br> **SaleItem:** Each record is uniquely identified by the integer primary key SaleItemId, while SaleId and RecordingId are integer fields that reference the associated sale and recording, respectively. Pricing and quantity information is stored using decimal and integer data types, and none of the columns allow null values.
-<br> **Staff:** Each staff member is uniquely identified by the integer primary key StaffId, which does not allow null values. Personal and contact attributes such as names, address, and email are stored as variable-length character strings, only requiring inputs for LastName and FirstName. Dates such as BirthDate and HireDate are stored as datetime values and allow null values. The ManagerId field is an integer that may be null.
-<br> **Style:** Each style is uniquely identified by the integer primary key StyleId, which does not allow null values. The Name attribute is stored as a variable-length character string and may be null. 
+
+**Format:** The Format table includes an integer primary key, FormatId, which does not allow null values. The Name attribute is stored as a variable-length character string and may be null. 
+
+**Recording:** The Recording table is uniquely identified by the integer primary key RecordingId, which is not nullable. Descriptive attributes such as Name and Writer are stored as variable-length character strings. Numeric attributes such as ReleaseId, FormatId, StyleId, DurationMs, and SizeBytes use integer data types, with only FormatId and DurationMs being required. The ItemPrice key uses decimal data dype and is not nullable.
+
+**Release:** Each release is uniquely identified by the integer primary key ReleaseId, which does not allow null values. The Title attribute is stored as a variable-length character string and is required, while the CreatorId attribute is an integer field and does not allow null values.
+
+**Sale:** Each sale is uniquely identified by the integer primary key SaleId, which does not allow null values. The table includes temporal data (InvoiceDate) stored as a datetime value that is required, as well as billing address attributes stored as variable-length character strings, which allows null values. The total value of a sale is stored in the SaleTotal column using a decimal data type.
+
+**SaleItem:** Each record is uniquely identified by the integer primary key SaleItemId, while SaleId and RecordingId are integer fields that reference the associated sale and recording, respectively. Pricing and quantity information is stored using decimal and integer data types, and none of the columns allow null values.
+
+**Staff:** Each staff member is uniquely identified by the integer primary key StaffId, which does not allow null values. Personal and contact attributes such as names, address, and email are stored as variable-length character strings, only requiring inputs for LastName and FirstName. Dates such as BirthDate and HireDate are stored as datetime values and allow null values. The ManagerId field is an integer that may be null.
+
+**Style:** Each style is uniquely identified by the integer primary key StyleId, which does not allow null values. The Name attribute is stored as a variable-length character string and may be null. 
 
 <br> **Which tables appear to represent core entities vs. supporting or join tables?**
 <br> **Core Entities:** Client, Collection, Creator, Format, Recording, Release, Sale, Staff, Style
