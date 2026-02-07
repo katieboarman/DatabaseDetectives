@@ -78,36 +78,72 @@ No
 There was row multiplication for H1 and H2 due to the one-to-many relationships, such as Style to Recording to SaleItem and Collection to CollectionItem. However, no unexpected row multiplication occured in the Format to Recording join, since each recording belongs to exactly one format.
 
 ### Task 4 - Aggregation & Uniqueness Analysis
-Use aggregation to better understand:
-Entity counts
-Attribute uniqueness
-Relationship multiplicity
+**Use aggregation to better understand:**
+**Entity counts**
+The database contains 59 clients, 412 sales, and 3,503 recordings, indicating that the catalog of recordings is much larger than the customer base and transactional data. The number of sales compared to the number of clients implies that many clients have made multiple purchases, rather than sales being evenly distributed one-to-one across clients. Additionally, the large disparity between recordings and sales suggests that only a subset of the available recordings are purchased.
 
+**Attribute uniqueness**
+The query checking duplicates of ClientId returned an empty set, supporting that ClientId is unique and functions as a primary key. In contrast, grouping by Collection.Name revealed duplicates, indicating that collection names are descriptive rather than unique identifiers.
 
-<br> What do aggregates reveal that simple inspection did not?
+**Relationship multiplicity**
+Relationship multiplicity was examined by grouping tables by their foreign keys: grouping recordings by FormatId showed that each format is associated with many recordings, and grouping CollectionItem by CollectionId showed that collections contain multiple items, with substantial variation in collection size.
 
+<br> **What do aggregates reveal that simple inspection did not?**
+Aggregates revealed differences in scale, confirmed which attributes are truly unique, and exposed one-to-many and many-to-many relationship patterns that are not visible through simple inspection of individual tables or rows.
 
-<br> Where do assumptions break down?
-
+<br> **Where do assumptions break down?**
+The assumptions break down when descriptive attributes are treated as identifiers, when relationships are assumed to be evenly distributed, and when the existence of records is assumed to imply participation in downstream relationships.
 
 ### Task 5 - Anomalies & Design Issues
-<br> What design issues might exist?
-<br> What evidence supports your claim?
-<br> What redesign would you propose?
+<br> **Redundant data**
+Contact and address information is duplicated across Client and Staff tables. While this may be intentional, it represents redundant storage of the same type of data and could lead to inconsistent formatting.
+
+<br> **Repeating Groups**
+Repeated collection names indicate repeating groups where the name is descriptive rather than unique. The database correctly uses CollectionId to distinguish collections, but the repetition shows that names alone cannot identify a collection.
+
+<br> **Inconsistent Values**
+Although no direct contradictions appear, format names combine different concepts, which risks inconsistent labeling and complicates querying.
+
+<br> **Columns that Encode Multiple Facts**
+The Format.Name column encodes multiple facts within a single attribute, violating atomicity. Separating these into distinct columns would improve normalization and reduce ambiguity.
 
 ### Task 6 - Explore the Data
-<br> 1. 
-<br> Fact Statement
-<br> SQL Evidence
-<br> Explanation of Significance
-<br> 2. 
-<br> Fact Statement
-<br> SQL Evidence
-<br> Explanation of Significance
-<br> 3.
-<br> Fact Statement
-<br> SQL Evidence
-<br> Explanation of Significance
+<br> **1. One format accounts for the vast majority of recordings**
+<br> **Fact Statement**
+Over 85% of all recordings in the database use a single format: MPEG audio file.
+
+<br> **SQL Evidence**
+MPEG audio file: 3034 recordings
+Total recordings: 3503
+
+<br> **Explanation of Significance**
+At first glance, the presence of multiple formats suggests a diverse catalog. Aggregation reveals that the dataset is actually heavily dominated by one format, with all other formats making up a small minority. This has implications for storage, compatibility, and sales analysis.
+
+<br> **2. Styles differ dramatically in how often they are sold**
+<br> **Fact Statement**
+Sales are highly uneven across musical styles, and at least one style has zero recorded sales.
+
+<br> **SQL Evidence**
+Rock: 835 sales
+Latin: 386
+Jazz: 80
+Opera: 0
+
+<br> **Explanation of Significance**
+Simply inspecting the Style table shows many genres, but aggregation reveals that not all styles participate in sales at all. The presence of styles with zero sales demonstrates that inclusion in the catalog does not imply demand. This highlights a disconnect between content availability and consumer behavior, which is not visible without joining and aggregating across tables.
+
+
+<br> **3. Collections vary enormously in size**
+<br> **Fact Statement**
+Collections in the database range from containing a single recording to containing over 3,000 recordings, indicating extreme variation in collection scope.
+
+<br> **SQL Evidence**
+Largest collection: 3290 recordings
+Medium collection: 213 recordings
+Smallest collection: 1 recording
+
+<br> **Explanation of Significance**
+Without aggregation, collections appear conceptually similar. Aggregation shows that collections serve very different roles: some act as broad catch-all groupings while others are highly specialized. This reveals that “collection” is not a uniform concept in the data, but a flexible structure used at vastly different scales.
 
 ## Appendices
 
@@ -125,6 +161,7 @@ AI Used: ChatGPT
 
 ![Alt text](path/to/image5.png "Examples About Hypotheses")
 
+Overall, AI was an incredibly helpful tool for this project. I felt confident in using the skills we have learned in class, but there was some disconnect on how and when to apply them. It was also my first time using a terminal on Samford's network to access a database, so there were some questions concerning that. With that being said, there were some issues with its use, mainly with my promots not being specific enough or not providing the proper amount of information. The first four prompts I have listed were fairly straightforward; however, the final question I asked ChatGPT came with some complications. I originally asked "What hypotheses could we make about this database?" It did provide a list of interesting ideas, but they were not specific to the relationships between tables. When I added that specification, it generated another list, but those could not be tested by joining tables. I went back another time to clarify, but the new list required techniques that were much more complex than what we were doing in class. Finally, once I told ChatGPT what course I was in, it gave my results that were specfic to the relationships between tables, could be tested by joining them, and were on level for our course.
 ### SQL Log
 ```sql
 USE COSC315DD;
@@ -177,14 +214,14 @@ HAVING COUNT(ci.RecordingId) >= 2
 ORDER BY NumRecordings DESC;
 
 ##Orphan Check for H1
--- Orphan recordings (StyleId not found)
+-- Orphan recordings 
 SELECT r.RecordingId, r.StyleId
 FROM Recording r
 LEFT JOIN Style s ON s.StyleId = r.StyleId
 WHERE r.StyleId IS NOT NULL
   AND s.StyleId IS NULL;
 
--- Orphan sale items (RecordingId not found)
+-- Orphan sale items
 SELECT si.SaleItemId, si.RecordingId
 FROM SaleItem si
 LEFT JOIN Recording r ON r.RecordingId = si.RecordingId
@@ -197,11 +234,60 @@ FROM Recording r
 LEFT JOIN Format f ON f.FormatId = r.FormatId
 WHERE f.FormatId IS NULL;
 
-## Orphan Check for H3
+### Orphan Check for H3
 -- Orphan collection items (CollectionId not found)
 SELECT ci.CollectionId, ci.RecordingId
 FROM CollectionItem ci
 LEFT JOIN Collection c ON c.CollectionId = ci.CollectionId
 WHERE c.CollectionId IS NULL;
+
+### Entity Counts
+SELECT COUNT(*) FROM Client;
+SELECT COUNT(*) FROM Recording;
+SELECT COUNT(*) FROM Sale;
+
+### Attribute Uniqueness
+SELECT ClientId, COUNT(*)
+FROM Client
+GROUP BY ClientId
+HAVING COUNT(*) > 1;
+
+SELECT Name, COUNT(*)
+FROM Collection
+GROUP BY Name
+HAVING COUNT(*) > 1;
+
+### Relationship Multiplicity
+-- Format -> Recording
+SELECT FormatId, COUNT(*)
+FROM Recording
+GROUP BY FormatId;
+
+-- Collection -> CollectionItem
+SELECT CollectionId, COUNT(*)
+FROM CollectionItem
+GROUP BY CollectionId;
+
+### Interesting Fact 1
+SELECT FormatId, COUNT(*) AS NumRecordings
+FROM Recording
+GROUP BY FormatId
+ORDER BY NumRecordings DESC;
+
+### Interesting Fact 2
+SELECT st.StyleId,
+       st.Name AS StyleName,
+       COUNT(si.SaleItemId) AS TimesSold
+FROM Style st
+LEFT JOIN Recording r ON r.StyleId = st.StyleId
+LEFT JOIN SaleItem si ON si.RecordingId = r.RecordingId
+GROUP BY st.StyleId, st.Name
+ORDER BY TimesSold DESC;
+
+### Interesting Fact 3
+SELECT CollectionId, COUNT(*) AS NumRecordings
+FROM CollectionItem
+GROUP BY CollectionId
+ORDER BY NumRecordings DESC;
 
 ```
